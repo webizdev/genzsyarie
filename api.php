@@ -41,16 +41,17 @@ switch ($method) {
         $full_name = trim($input['full_name'] ?? '');
         $whatsapp = trim($input['whatsapp_number'] ?? '');
         $address = trim($input['corporate_address'] ?? '');
+        $business_activity = trim($input['business_activity'] ?? '');
 
-        if (empty($full_name) || empty($whatsapp) || empty($address)) {
+        if (empty($full_name) || empty($whatsapp) || empty($address) || empty($business_activity)) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'Semua field wajib diisi']);
             exit;
         }
 
-        $stmt = $conn->prepare('INSERT INTO registrations (full_name, whatsapp_number, corporate_address, status) VALUES (?, ?, ?, ?)');
+        $stmt = $conn->prepare('INSERT INTO registrations (full_name, whatsapp_number, corporate_address, business_activity, status) VALUES (?, ?, ?, ?, ?)');
         $status = 'pending';
-        $stmt->bind_param('ssss', $full_name, $whatsapp, $address, $status);
+        $stmt->bind_param('sssss', $full_name, $whatsapp, $address, $business_activity, $status);
 
         if ($stmt->execute()) {
             http_response_code(201);
@@ -62,6 +63,7 @@ switch ($method) {
                     'full_name' => $full_name,
                     'whatsapp_number' => $whatsapp,
                     'corporate_address' => $address,
+                    'business_activity' => $business_activity,
                     'status' => 'pending'
                 ]
             ]);
